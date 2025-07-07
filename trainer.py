@@ -30,34 +30,34 @@ class Trainer(basic.Trainer):
         return loss
 
 
-    # def test_model(self, config, testset, sampler=None, **kwargs):
-    #     """
-    #     重载父类方法，针对inception_v3修改
-    #     """
-    #     batch_size = config["batch_size"]
+    def test_model(self, config, testset, sampler=None, **kwargs):
+        """
+        重载父类方法，针对inception_v3修改
+        """
+        batch_size = config["batch_size"]
 
-    #     test_loader = torch.utils.data.DataLoader(
-    #         testset, batch_size=batch_size, shuffle=False, sampler=sampler
-    #     )
+        test_loader = torch.utils.data.DataLoader(
+            testset, batch_size=batch_size, shuffle=False, sampler=sampler
+        )
 
-    #     correct = 0
-    #     total = 0
+        correct = 0
+        total = 0
 
-    #     self.model.to(self.device)
-    #     with torch.no_grad():
-    #         for examples, labels in test_loader:
-    #             examples, labels = examples.to(self.device), labels.to(self.device)
+        self.model.to(self.device)
+        with torch.no_grad():
+            for examples, labels in test_loader:
+                examples, labels = examples.to(self.device), labels.to(self.device)
 
-    #             outputs = self.model(examples)
+                outputs = self.model(examples)
 
-    #             outputs = self.process_outputs(outputs)
+                outputs = self.process_outputs(outputs)
 
-    #             # 新增代码（针对inception_v3）
-    #             if config["model_name"] == "inception_v3":
-    #                 outputs = outputs.logits
+                # 新增代码（针对inception_v3）
+                if config["model_name"] == "inception_v3":
+                    outputs = outputs.logits
 
-    #             _, predicted = torch.max(outputs.data, 1)
-    #             total += labels.size(0)
-    #             correct += (predicted == labels).sum().item()
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
 
-    #     return correct / total
+        return correct / total
