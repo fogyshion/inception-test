@@ -91,6 +91,8 @@ class TinyImageNet(Dataset):
                         else:
                             item = (path, self.class_to_idx[self.val_img_to_class[fname]])
                         self.imgs.append(item)
+
+        self.targets = [i[1] for i in self.imgs]
                         
     def __len__(self):
         return self.len_dataset
