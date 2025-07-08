@@ -1,5 +1,5 @@
 from plato.trainers import basic
-
+import torch
 
 class Trainer(basic.Trainer):
     def perform_forward_and_backward_passes(self, config, examples, labels):
@@ -7,13 +7,14 @@ class Trainer(basic.Trainer):
         重载父类方法，针对inception_v3修改
         """
         self.optimizer.zero_grad()
-
         outputs = self.model(examples)
 
         if config["model_name"] == "inception_v3":
             # 修改代码（针对inception_v3）
-            logits = outputs.logits
-            loss = self._loss_criterion(logits, labels)
+            logits, aux_logits = outputs.logits, outputs.aux_logits
+            # print("logits的shape为：", logits.shape)
+            # print("aux_logits的shape为：", aux_logits.shape)
+            loss = self._loss_criterion(logits, labels) + 0.3 * self._loss_criterion(aux_logits, labels)
         else:
             # 原始代码
             loss = self._loss_criterion(outputs, labels)
@@ -51,10 +52,6 @@ class Trainer(basic.Trainer):
                 outputs = self.model(examples)
 
                 outputs = self.process_outputs(outputs)
-
-                # 新增代码（针对inception_v3）
-                if config["model_name"] == "inception_v3":
-                    outputs = outputs.logits
 
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
